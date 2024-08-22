@@ -1,6 +1,7 @@
 package io.mpolivaha.psersistable;
 
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -13,10 +14,12 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Accessors(chain = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table("root_aggregate")
 public class RootAggregate implements Persistable<Long> {
 
   @Id
+  @EqualsAndHashCode.Include
   private Long id;
 
   private String name;
