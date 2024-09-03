@@ -1,10 +1,7 @@
 package io.mpolivaha.domain_events;
 
-import io.mpolivaha.domain_events.events.CargoStatusChangeDomainEvent;
-import io.mpolivaha.domain_events.events.CargoWeightUpdatedDomainEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
@@ -19,14 +16,12 @@ public class CargoService {
         .findById(newCargo.getId())
         .map(existingCargo -> {
           if (newCargo.getWeight() != existingCargo.getWeight()) {
-            existingCargo.setWeight(newCargo.getWeight());
-            newCargo.registerEvent(new CargoWeightUpdatedDomainEvent());
+            existingCargo.changeWeight(newCargo.getWeight());
           }
           if (newCargo.getStatus() != existingCargo.getStatus()) {
-            existingCargo.setStatus(newCargo.getStatus());
-            newCargo.registerEvent(new CargoStatusChangeDomainEvent());
+            existingCargo.changeStatus(newCargo.getStatus());
           }
-          return newCargo;
+          return existingCargo;
         })
         .map(cargoRepository::save)
         .orElseThrow(RuntimeException::new));

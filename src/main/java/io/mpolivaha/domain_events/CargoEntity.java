@@ -1,5 +1,7 @@
 package io.mpolivaha.domain_events;
 
+import io.mpolivaha.domain_events.events.CargoStatusChangeDomainEvent;
+import io.mpolivaha.domain_events.events.CargoWeightUpdatedDomainEvent;
 import java.time.OffsetDateTime;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -33,14 +35,6 @@ public class CargoEntity extends AbstractAggregateRoot<CargoEntity> implements P
   @LastModifiedDate
   private OffsetDateTime updatedAt;
 
-  /**
-   * The access modifier has to be extended since we do not have access to {@link super#registerEvent(Object)} outside the {@link CargoEntity}
-   */
-  @Override
-  public <T> T registerEvent(T event) {
-    return super.registerEvent(event);
-  }
-
   @Override
   public boolean isNew() {
     return id == null;
@@ -49,5 +43,17 @@ public class CargoEntity extends AbstractAggregateRoot<CargoEntity> implements P
   @Override
   public Long getId() {
     return this.id;
+  }
+
+  public CargoEntity changeWeight(double weight) {
+    this.weight = weight;
+    super.registerEvent(new CargoWeightUpdatedDomainEvent());
+    return this;
+  }
+
+  public CargoEntity changeStatus(CargoStatus status) {
+    this.status = status;
+    super.registerEvent(new CargoStatusChangeDomainEvent());
+    return this;
   }
 }
