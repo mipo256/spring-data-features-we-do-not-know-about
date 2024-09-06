@@ -5,7 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.time.OffsetDateTime;
+import jakarta.persistence.Table;
+import java.time.Instant;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -17,6 +18,7 @@ import org.springframework.data.annotation.CreatedDate;
 @Getter
 @Accessors(chain = true)
 @Entity
+@Table(name = "scrolling_entity")
 public class ScrollingEntity {
 
   @Id
@@ -28,5 +30,5 @@ public class ScrollingEntity {
   private String name;
 
   @CreatedDate
-  private OffsetDateTime createdAt;
+  private Instant createdAt;
 }

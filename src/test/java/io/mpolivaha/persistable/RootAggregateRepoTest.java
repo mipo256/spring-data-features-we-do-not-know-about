@@ -1,4 +1,4 @@
-package io.mpolivaha.psersistable;
+package io.mpolivaha.persistable;
 
 import io.mpolivaha.AbstractIntegrationTest;
 import java.util.Optional;

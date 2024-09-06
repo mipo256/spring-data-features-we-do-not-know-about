@@ -1,4 +1,4 @@
-package io.mpolivaha.psersistable;
+package io.mpolivaha.persistable;
 
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
