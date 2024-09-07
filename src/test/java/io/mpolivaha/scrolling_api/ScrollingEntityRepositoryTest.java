@@ -1,6 +1,5 @@
 package io.mpolivaha.scrolling_api;
 
-import io.mpolivaha.AbstractIntegrationTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +11,8 @@ import org.springframework.data.domain.Window;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.transaction.annotation.Transactional;
+
+import io.mpolivaha.AbstractIntegrationTest;
 
 @Sql(
     executionPhase = ExecutionPhase.BEFORE_TEST_METHOD,
@@ -92,5 +93,44 @@ class ScrollingEntityRepositoryTest extends AbstractIntegrationTest {
     // Then.
     Assertions.assertThat(firstWindow.size()).isEqualTo(4);
     Assertions.assertThat(secondWindow.size()).isEqualTo(0);
+  }
+
+  // Albert, Alex, Claus, Oliver, Stella
+  @Test
+  @Transactional
+  void testMissingRowProblemWithOffsetBasedPagination() {
+    // Given.
+    ScrollingEntity albert = new ScrollingEntity().setName("Albert");
+    scrollingEntityRepository.save(albert);
+    scrollingEntityRepository.save(new ScrollingEntity().setName("Alex"));
+    scrollingEntityRepository.save(new ScrollingEntity().setName("Claus"));
+    scrollingEntityRepository.save(new ScrollingEntity().setName("Oliver"));
+    scrollingEntityRepository.save(new ScrollingEntity().setName("Stella"));
+
+    // When.
+    Page<ScrollingEntity> firstResult = scrollingEntityRepository.findByNameContains("l", PageRequest.of(0, 3, Sort.by("name")));
+
+    scrollingEntityRepository.deleteById(albert.getId());
+
+    Page<ScrollingEntity> secondResult = scrollingEntityRepository.findByNameContains("l", PageRequest.of(1, 3, Sort.by("name")));
+
+    // Then.
+    Assertions
+      .assertThat(firstResult.getSize())
+      .isEqualTo(3);
+
+    Assertions
+      .assertThat(firstResult)
+      .extracting(ScrollingEntity::getName)
+      .containsOnly("Albert", "Alex", "Claus");
+
+    Assertions
+      .assertThat(secondResult.getTotalElements())
+      .isEqualTo(4);
+
+    Assertions
+      .assertThat(secondResult)
+      .extracting(ScrollingEntity::getName)
+      .containsOnly( "Stella");
   }
 }
